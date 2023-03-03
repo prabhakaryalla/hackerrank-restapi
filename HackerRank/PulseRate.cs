@@ -13,6 +13,8 @@ using System.Text;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace HackerRank
 {
@@ -32,27 +34,25 @@ namespace HackerRank
         {
             var url = "https://jsonmock.hackerrank.com/api/medical_records";
             int totalpages = 0;
-            int totalCount = 0;
-            int totalpulse = 0;
-            using (var client1 = new HttpClient())
-            {
-                var result = client1.GetAsync(url).Result;
-                var response = result.Content.ReadAsStringAsync().Result;
-                var json = System.Text.Json.JsonSerializer.Deserialize<ODataResponse<MedicalReponse>>(response);
-                totalpages = json.total_pages;
-            }
+            ConcurrentBag<int> totalCount = new ConcurrentBag<int>();
+            ConcurrentBag<int> totalpulse = new ConcurrentBag<int>();
             using var client = new HttpClient();
-            for (int i =1; i<= totalpages; i++)
+            var res1 = client.GetAsync(url).Result;
+            var response1 = res1.Content.ReadAsStringAsync().Result;
+            var json1 = System.Text.Json.JsonSerializer.Deserialize<ODataResponseWithoutData>(response1);
+            totalpages = json1.total_pages;
+
+            Parallel.For(1, totalpages + 1, new ParallelOptions() { MaxDegreeOfParallelism = 12 }, i =>
             {
                 var result = client.GetAsync(url + $"?page={i}").Result;
                 var response = result.Content.ReadAsStringAsync().Result;
                 var json = System.Text.Json.JsonSerializer.Deserialize<ODataResponse<MedicalReponse>>(response);
                 var docmedicalReports = (from s in json.data where s.diagnosis.name == diagnosisName && s.doctor.id == doctorId select s)?.ToList();
-                totalCount += docmedicalReports.Count;
-                totalpulse += docmedicalReports.Sum(x => x.vitals.pulse);
-            }
+                totalCount.Add(docmedicalReports.Count);
+                totalpulse.Add(docmedicalReports.Sum(x => x.vitals.pulse));               
+            });
 
-            return (totalpulse/totalCount);
+            return (totalpulse.Sum() / totalCount.Sum());
         }
     }
 
