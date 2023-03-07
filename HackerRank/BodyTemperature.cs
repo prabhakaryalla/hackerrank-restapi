@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 
 namespace HackerRank
 {
+    //This is verified and working fine in hackerrank
     public static class BodyTemperature
     {
         /*

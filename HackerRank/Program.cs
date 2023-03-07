@@ -10,10 +10,12 @@ namespace HackerRank
             //PulseRateV2.pulseRate("Pulmonary embolism", 2);
 
             //Articles.getArticleTitles("epaga");
-            //PhoneNumber.getPhoneNumbers("Puerto Rico", "5435385368");
+            PhoneNumber.getPhoneNumbers("Puerto Rico", "5435385368");
             //Restaurant.bestRestaurant("Omaha", 130);
 
-            BodyTemperature.bodyTemperature("Dr Allysa Ellis", 2);
+            //BodyTemperature.bodyTemperature("Dr Allysa Ellis", 2);
+
+            //MaximumTransfer.maximumTransfer("John Oliver", "Ripley");
 
             //DoubleonMatch.Run();
             //CountingClosedPaths.Run();
